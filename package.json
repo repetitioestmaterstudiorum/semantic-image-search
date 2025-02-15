@@ -16,7 +16,8 @@
   "license": "MIT",
   "devDependencies": {
     "dotenv": "^16.4.7",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "pdf-to-png-converter": "^3.6.4"
   },
   "dependencies": {
     "@lancedb/lancedb": "^0.16.0",

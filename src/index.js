@@ -1,30 +1,90 @@
 import { createLogger } from "./logger.js";
 import { createCLI } from "./cli.js";
-import { embedImage } from "./embed.js";
+import { embedImageFromPath } from "./embed.js";
+import { C } from "./constants.js";
+import "./db.js";
+import { join } from "path";
+import fs from "fs/promises";
+import { createWriteStream } from "fs";
+import { pipeline } from "stream/promises";
+import { pdfToImageStreams } from "./pdf.js";
+import { findSimilar, insertOne } from "./db.js";
 
 const log = createLogger();
 log.info("Initializing");
 
-const DEFAULT_N_RESULTS = 5;
-
-export function addPdfFolder(folderPath) {
+export async function addPdfFolder(folderPath) {
   log.info(`Adding folder "${folderPath}"`);
-}
-
-export function addPdf(pdfPath) {
-  log.info(`Adding PDF "${pdfPath}"`);
-}
-
-export function retrieveForPdf(pdfPath, nResults = DEFAULT_N_RESULTS) {
-  log.info(`Retrieving ${nResults} most similar PDFs for PDF "${pdfPath}"`);
-}
-
-export async function embedTest() {
-  log.info("Embedding test");
-  const embedding = await embedImage(
-    "dataset/pdf-png/3274T79_Steel Oval Eye Nut- for Lifting.png"
+  let entries;
+  try {
+    entries = await fs.readdir(folderPath, { withFileTypes: true });
+  } catch (err) {
+    log.error(`Error reading folder "${folderPath}": ${err}`);
+    return;
+  }
+  const pdfFiles = entries.filter(
+    (entry) => entry.isFile() && entry.name.toLowerCase().endsWith(".pdf")
   );
-  log.info("Embedding", embedding);
+  for (const file of pdfFiles) {
+    const pdfPath = join(folderPath, file.name);
+    await addPdf(pdfPath);
+  }
+}
+
+export async function addPdf(pdfPath) {
+  try {
+    // Create working directory if it doesn't exist
+    try {
+      await fs.access(C.pdfToPng.workingDirectory);
+    } catch {
+      await fs.mkdir(C.pdfToPng.workingDirectory);
+    }
+
+    const pageStreams = await pdfToImageStreams(pdfPath);
+    const tempFiles = [];
+
+    for (const { pageNumber, stream } of pageStreams) {
+      // Save stream to temporary PNG file
+      const tempImagePath = join(
+        C.pdfToPng.workingDirectory,
+        `${pdfPath.split("/").pop()}-page${pageNumber}.png`
+      );
+      tempFiles.push(tempImagePath);
+      const writeStream = createWriteStream(tempImagePath);
+      await pipeline(stream, writeStream);
+
+      const embedding = await embedImageFromPath(tempImagePath);
+      log.info(`Embedding length: ${embedding.length}`);
+      await insertOne({
+        vector: embedding,
+        fileName: pdfPath.split("/").pop(),
+        pageNumber,
+      });
+      log.info(`Inserted embedding for PDF "${pdfPath}", page ${pageNumber}`);
+    }
+
+    // Clean up temporary files
+    await Promise.all(tempFiles.map((file) => fs.unlink(file)));
+  } catch (err) {
+    log.error(`Error adding PDF "${pdfPath}": ${err}`);
+  }
+}
+
+export async function retrieveForImage(
+  imagePath,
+  nResults = C.retrieval.defaultNResults
+) {
+  log.info(`Retrieving ${nResults} most similar PDFs for image "${imagePath}"`);
+  try {
+    const embedding = await embedImageFromPath(imagePath);
+    log.info(`Embedding length: ${embedding.length}`);
+    const results = await findSimilar({ vector: embedding, nResults });
+    log.info("Retrieval results:", results);
+    return results;
+  } catch (err) {
+    log.error(`Error retrieving for image "${imagePath}": ${err}`);
+    return [];
+  }
 }
 
 const cli = createCLI();

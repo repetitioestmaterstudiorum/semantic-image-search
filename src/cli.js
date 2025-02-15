@@ -1,5 +1,5 @@
 import readline from "node:readline/promises";
-import { addPdfFolder, addPdf, retrieveForPdf } from "./index.js";
+import { addPdfFolder, addPdf, retrieveForImage } from "./index.js";
 import { createLogger } from "./logger.js";
 import { C } from "./constants.js";
 import { dropTable } from "./db.js";
@@ -20,10 +20,13 @@ const commands = {
     maxArgs: 1,
   },
   retrieve: {
-    parameters: `<pdfPath> (<numberOfResults> = ${C.retrieval.defaultNResults})`,
-    action: (args) => {
-      const [pdfPath, nResults] = args.split(" ");
-      retrieveForPdf(pdfPath, parseInt(nResults));
+    parameters: `<imagePath> (<numberOfResults> = ${C.retrieval.defaultNResults})`,
+    action: async (args) => {
+      const [imagePath, nResults] = args;
+      await retrieveForImage(
+        imagePath,
+        nResults ? parseInt(nResults) : undefined
+      );
     },
     minArgs: 1,
     maxArgs: 2,
@@ -50,12 +53,24 @@ function printHelp() {
   console.info('\nType a command or "exit" to quit\n');
 }
 
+function parseInput(input) {
+  const regex = /"([^"]+)"|(\S+)/g;
+  const tokens = [];
+  let match;
+  while ((match = regex.exec(input)) !== null) {
+    tokens.push(match[1] || match[2]);
+  }
+  return tokens;
+}
+
 async function handleCommand(input) {
   if (input.trim() === "exit") {
     return true;
   }
 
-  const [cmd, ...args] = input.trim().split(" ");
+  const tokens = parseInput(input.trim());
+  const cmd = tokens[0];
+  const args = tokens.slice(1);
   const command = commands[cmd];
 
   if (
@@ -68,8 +83,11 @@ async function handleCommand(input) {
   }
 
   try {
-    console.info("");
-    await command.action(args.join(" "));
+    if (command.maxArgs === 1) {
+      await command.action(args[0]);
+    } else {
+      await command.action(args);
+    }
   } catch (error) {
     log.error("Error executing command:", error);
   }
@@ -81,7 +99,6 @@ export function createCLI() {
     input: process.stdin,
     output: process.stdout,
     terminal: false,
-    prompt: "> ",
   });
 
   async function startCLI() {
@@ -90,7 +107,7 @@ export function createCLI() {
       printHelp();
 
       while (true) {
-        const input = await rl.question("> ", { history: true });
+        const input = await rl.question("> ");
         const shouldExit = await handleCommand(input);
         if (shouldExit) {
           rl.close();
