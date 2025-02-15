@@ -12,9 +12,9 @@ def log(msg):
 device = "mps" if torch.backends.mps.is_available() else "cpu"
 log(f"Using device {device}")
 
-model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32").to(device)
+model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14").to(device)
 log("Model loaded")
-processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
+processor = CLIPProcessor.from_pretrained("openai/clip-vit-large-patch14")
 log("Processor loaded")
 
 image_path = sys.argv[1]

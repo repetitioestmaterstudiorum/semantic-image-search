@@ -7,7 +7,7 @@ export const C = {
     defaultNResults: 5,
   },
   embedding: {
-    batchSize: 5,
+    batchSize: 3,
   },
   pdfToPng: {
     workingDirectory: "./tmp",

@@ -13,7 +13,7 @@ Very much not for production. Could make sense in Node.js if using an image mode
 ## Setup
 
 - `cp env.example .env`, check the values
-- `npm run install`
+- `npm i`
 - Ensure you have PDM installed on your system (macOS: `brew install pdm`)
 - `cd src/python-clip && pdm install && cd ../..`
 
