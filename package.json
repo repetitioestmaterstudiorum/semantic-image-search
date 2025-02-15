@@ -4,7 +4,6 @@
   "description": "Semantic image search in node.js with CLIP",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
     "dev": "nodemon -r dotenv/config src/index.js",
     "test": "Not implemented"
   },
