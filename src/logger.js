@@ -3,15 +3,14 @@ import debug from "debug";
 export function createLogger() {
   const err = new Error();
   if (Error.captureStackTrace) Error.captureStackTrace(err, createLogger);
-  const callerFilePathAndLineInfo = extractFilePathAndLineInfo(err.stack);
-  const callerFilePath = callerFilePathAndLineInfo.split(":")[0];
+  const callerFilePath = extractFilePathAndLineInfo(err.stack);
   const levels = ["debug", "info", "warn", "error"];
   const logger = {};
   levels.forEach((level) => {
-    const instance = debug(`${callerFilePath}:${level}`);
+    const instance = debug(callerFilePath);
     logger[level] = (message, data) => {
       const timestamp = new Date().toISOString();
-      const logMsg = `${timestamp} [${callerFilePathAndLineInfo}] ${level.toUpperCase()}: ${message}`;
+      const logMsg = `${timestamp} ${level.toUpperCase()}: ${message}`;
       data !== undefined ? instance(logMsg, data) : instance(logMsg);
     };
   });
@@ -26,6 +25,7 @@ function extractFilePathAndLineInfo(stack) {
   const lineWithoutPath = line
     .replace("at file://", "")
     .replace(process.cwd(), "")
-    .trim();
+    .trim()
+    .split(":")[0];
   return lineWithoutPath;
 }
