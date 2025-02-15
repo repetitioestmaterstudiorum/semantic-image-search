@@ -25,9 +25,22 @@ export async function addPdfFolder(folderPath) {
   const pdfFiles = entries.filter(
     (entry) => entry.isFile() && entry.name.toLowerCase().endsWith(".pdf")
   );
-  for (const file of pdfFiles) {
-    const pdfPath = join(folderPath, file.name);
-    await addPdf(pdfPath);
+
+  // Process PDFs in batches
+  for (let i = 0; i < pdfFiles.length; i += C.embedding.batchSize) {
+    const batch = pdfFiles.slice(i, i + C.embedding.batchSize);
+    log.info(
+      `Processing PDF batch ${i / C.embedding.batchSize + 1} of ${Math.ceil(
+        pdfFiles.length / C.embedding.batchSize
+      )}`
+    );
+
+    await Promise.all(
+      batch.map((file) => {
+        const pdfPath = join(folderPath, file.name);
+        return addPdf(pdfPath);
+      })
+    );
   }
 }
 

@@ -6,6 +6,9 @@ export const C = {
   retrieval: {
     defaultNResults: 5,
   },
+  embedding: {
+    batchSize: 5,
+  },
   pdfToPng: {
     workingDirectory: "./tmp",
   },
