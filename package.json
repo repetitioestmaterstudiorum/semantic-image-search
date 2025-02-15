@@ -1,0 +1,25 @@
+{
+  "name": "semantic-image-search",
+  "version": "0.1.0",
+  "description": "Semantic image search in node.js with CLIP",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon -r dotenv/config src/index.js",
+    "test": "Not implemented"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/repetitioestmaterstudiorum/semantic-image-search.git"
+  },
+  "author": "repetitioestmaterstudiorum",
+  "license": "MIT",
+  "devDependencies": {
+    "dotenv": "^16.4.7",
+    "nodemon": "^3.1.9"
+  },
+  "dependencies": {
+    "debug": "^4.4.0"
+  },
+  "type": "module"
+}
