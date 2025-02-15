@@ -19,4 +19,10 @@ Ensure the setup is done.
 
 ### CLI
 
-...
+The CLI provides the following commands:
+
+- `add-folder <folderPath>` - Add all PDFs from a folder
+- `add-pdf <pdfPath>` - Add a single PDF file
+- `retrieve <imagePath> [numberOfResults]` - Find similar PDFs using an image (optional: specify number of results)
+- `reset-db` - Reset the database
+- `help` - Show available commands
