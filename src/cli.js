@@ -1,7 +1,8 @@
 import readline from "node:readline/promises";
-import { addPdfFolder, addPdf, retrieveForPdf, embedTest } from "./index.js";
+import { addPdfFolder, addPdf, retrieveForPdf } from "./index.js";
 import { createLogger } from "./logger.js";
 import { C } from "./constants.js";
+import { dropTable } from "./db.js";
 
 const log = createLogger();
 
@@ -27,9 +28,9 @@ const commands = {
     minArgs: 1,
     maxArgs: 2,
   },
-  test: {
+  "reset-db": {
     parameters: "",
-    action: embedTest,
+    action: dropTable,
     minArgs: 0,
     maxArgs: 0,
   },

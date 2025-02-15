@@ -19,6 +19,7 @@
     "nodemon": "^3.1.9"
   },
   "dependencies": {
+    "@lancedb/lancedb": "^0.16.0",
     "debug": "^4.4.0"
   },
   "type": "module"
