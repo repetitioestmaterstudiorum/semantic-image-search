@@ -2,11 +2,10 @@ import sys, json, torch
 from transformers import CLIPProcessor, CLIPModel
 from PIL import Image
 from datetime import datetime
-
-DEBUG = True
+import os
 
 def log(msg):
-    if DEBUG:
+    if os.environ.get("PYTHON_DEBUG") == "1":
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         print(f"  -- Python process [{timestamp}]: {msg}", file=sys.stderr)
 
