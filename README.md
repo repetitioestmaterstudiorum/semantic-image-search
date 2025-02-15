@@ -6,6 +6,8 @@ A super simple command line utility to embed PDF files as images with CLIP, stor
 
 - `cp env.example .env`, check the values
 - `npm run install`
+- Ensure you have PDM installed on your system (macOS: `brew install pdm`)
+- `cd src/python-clip && pdm install && cd ../..`
 
 ### Development
 
