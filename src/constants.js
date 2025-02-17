@@ -13,4 +13,7 @@ export const C = {
   pdfToPng: {
     workingDirectory: "./tmp",
   },
+  pythonApi: {
+    url: `http://localhost:${process.env.PORT || 8000}`,
+  },
 };
