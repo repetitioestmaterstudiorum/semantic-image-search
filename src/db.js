@@ -39,6 +39,7 @@ export async function findSimilar({ vector, nResults }) {
   const table = await db.openTable(C.db.collectionName);
   const results = await table
     .vectorSearch(vector)
+    .distanceType(C.retrieval.defaultDistanceMetric)
     .limit(nResults)
     .select(["id", "fileName", "pageNumber"])
     .toArray();

@@ -4,7 +4,8 @@ export const C = {
     collectionName: "pdf_embeddings",
   },
   retrieval: {
-    defaultNResults: 5,
+    defaultNResults: 10,
+    defaultDistanceMetric: "cosine",
   },
   embedding: {
     batchSize: 3,
