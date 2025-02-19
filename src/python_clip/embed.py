@@ -1,5 +1,5 @@
 import torch
-from transformers import CLIPProcessor, CLIPModel
+from transformers import CLIPProcessor, CLIPModel, AutoProcessor, AutoModel
 from PIL import Image
 from datetime import datetime
 import os
@@ -16,9 +16,12 @@ class ImageEmbedder:
         self.device = "mps" if torch.backends.mps.is_available() else "cpu"
         log(f"Using device {self.device}")
         
-        self.model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14").to(self.device)
+        # self.model = CLIPModel.from_pretrained("openai/clip-vit-large-patch14").to(self.device)
+        self.model = AutoModel.from_pretrained("jinaai/jina-clip-v2", trust_remote_code=True).to(self.device)
+
         log("Model loaded")
-        self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-large-patch14")
+        # self.processor = CLIPProcessor.from_pretrained("openai/clip-vit-large-patch14")
+        self.processor = AutoProcessor.from_pretrained("jinaai/jina-clip-v2", trust_remote_code=True)
         log("Processor loaded")
 
     def embed(self, image_path):

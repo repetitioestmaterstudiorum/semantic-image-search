@@ -7,8 +7,8 @@
     "start:python": "cd src/python_clip && pdm run python embed.py",
     "start:node": "node -r dotenv/config src/index.js",
     "dev:node": "nodemon -r dotenv/config src/index.js",
-    "start": "npm run start:python & sleep 5 && npm run start:node",
-    "dev": "npm run start:python & sleep 5 && npm run dev:node",
+    "start": "npm run start:python & sleep 15 && npm run start:node",
+    "dev": "npm run start:python & sleep 15 && npm run dev:node",
     "test": "Not implemented"
   },
   "repository": {

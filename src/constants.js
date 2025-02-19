@@ -8,7 +8,7 @@ export const C = {
     defaultDistanceMetric: "cosine",
   },
   embedding: {
-    batchSize: 50,
+    batchSize: 20,
   },
   pdfToPng: {
     workingDirectory: "./tmp",

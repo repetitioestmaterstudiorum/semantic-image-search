@@ -18,7 +18,7 @@ async function ensureTable() {
       new arrow.Field(
         "vector",
         new arrow.FixedSizeList(
-          768,
+          1024,
           new arrow.Field("item", new arrow.Float32())
         )
       ),
